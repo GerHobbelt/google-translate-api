@@ -31,7 +31,8 @@
   },
   "homepage": "https://github.com/matheuss/google-translate-api#readme",
   "browser": {
-    "got": false
+    "got": false,
+    "electron": false
   },
   "dependencies": {
     "configstore": "^2.0.0",
