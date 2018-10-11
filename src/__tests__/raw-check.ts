@@ -1,5 +1,5 @@
 import test from 'ava'
-import translate from '..'
+import { translate } from '..'
 
 test('translate some text and get the raw output alongside', async t => {
   try {
