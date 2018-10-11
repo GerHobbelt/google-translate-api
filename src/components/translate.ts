@@ -121,6 +121,7 @@ type langISO = keyof typeof languages
 type Translation = {
   /** The translated text */
   text: string
+  /** The original text */
   from: {
     language: {
       /** True if the API suggested a correction in the source language */
@@ -138,12 +139,13 @@ type Translation = {
     }
   }
   /** The raw response from th egoogle translate server */
-  raw?: Array<any>
+  raw: Array<any>
 }
 /**
- * Does practically nothing
+ * Practically never does anything. Gonna have to look into how the api actually works
+ * @private
  * @param {string} TKK Previous TKK
- * @return {string} The token.. I think
+ * @return {string} The fetched token
  */
 function getToken(TKK: string): any {
   // TODO: Simplify this login farther
@@ -184,13 +186,16 @@ function getToken(TKK: string): any {
  * @param {string} query – the name or the code of the desired language
  * @returns {string} The ISO 639-1 code of the language
  */
-export function LangFrom(query: string): langISO | string | undefined {
+export function LangFrom(query: string): string | undefined {
   return (
-    (Object.keys(languages).find(
+    Object.keys(languages).find(
       key => languages[key].toLowerCase() === query.toLowerCase()
-    ) as langISO) || (languages[query] ? query : undefined)
+    ) || (languages[query] ? query : undefined)
   )
 }
+/**
+ * Used to spawn api requests. Will handle a ratelimit
+ */
 export class TranslateAPI {
   private TKK = '0'
   private lastreq = 0
@@ -202,7 +207,9 @@ export class TranslateAPI {
    * Translate a string using google's translate API
    * @param {String} text The text to translate
    * @param {Object} [opts={}] Options for the request
-   * @returns {Translation} The translation response
+   * @param {String} [opts.from] The language to translate from
+   * @param {String} [opts.to] The language to translate to
+   * @returns {Promise<Translation>} The translation response
    */
   public translate(
     text: string,
@@ -211,14 +218,11 @@ export class TranslateAPI {
       from?: string
       /** The language to translate to */
       to?: string
-      /** Whether to include the raw API response */
-      raw?: boolean
     } = {}
   ): Promise<Translation> {
     const options = {
       from: LangFrom(opts.from || 'auto') || 'auto',
-      to: LangFrom(opts.to || 'en') || 'en',
-      raw: opts.raw || false
+      to: LangFrom(opts.to || 'en') || 'en'
     }
     const startat = (this.lastreq =
       Date.now() > this.lastreq + this.ratelimit
@@ -226,77 +230,70 @@ export class TranslateAPI {
         : this.lastreq + this.ratelimit)
     return new Promise((resolve, reject) => {
       setTimeout(
-        async () =>
-          get(
-            'https://translate.google.com/translate_a/single?' +
-              stringify({
-                client: 'gtx',
-                sl: options.from,
-                tl: options.to,
-                hl: options.to,
-                dt: [
-                  'at',
-                  'bd',
-                  'ex',
-                  'ld',
-                  'md',
-                  'qca',
-                  'rw',
-                  'rm',
-                  'ss',
-                  't'
-                ],
-                ie: 'UTF-8',
-                oe: 'UTF-8',
-                otf: 1,
-                ssel: 0,
-                tsel: 0,
-                kc: 7,
-                q: text,
-                tk: (this.TKK = await getToken(this.TKK))
-              }),
-            res => {
-              let body = ''
-              res.on('data', chunk => (body += chunk))
-              res.on('error', reject)
-              res.on('end', () => {
-                let parsed
-                try {
-                  parsed = JSON.parse(body)
-                } catch (error) {
-                  return reject(
-                    new LinguistError(
-                      'Failed to connect to google API',
-                      'BAD_NETWORK'
-                    )
-                  )
-                }
-                resolve({
-                  text: parsed[0].reduce(
-                    (str, arr) => (arr[0] ? str + arr[0] : str),
-                    ''
-                  ),
-                  from: {
-                    language: {
-                      didYouMean: parsed[2] !== parsed[8][0][0],
-                      iso: parsed[8][0][0]
-                    },
-                    text: {
-                      autoCorrected: parsed[7] ? parsed[7][5] : false,
-                      value: parsed[7]
-                        ? parsed[7][0]
-                            .replace(/<b><i>/g, '[')
-                            .replace(/<\/i><\/b>/g, ']')
-                        : '',
-                      didYouMean: parsed[7] ? !parsed[7][5] : false
-                    }
-                  },
-                  raw: options.raw ? parsed : null
-                })
-              })
-            }
-          ),
+        () => resolve(this._translate(text, options.from, options.to)),
         startat - Date.now()
+      )
+    })
+  }
+  private _translate(query, from, to): Promise<Translation> {
+    return new Promise(async (resolve, reject) => {
+      get(
+        'https://translate.google.com/translate_a/single?' +
+          stringify({
+            client: 'gtx',
+            sl: from,
+            tl: to,
+            hl: to,
+            dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
+            ie: 'UTF-8',
+            oe: 'UTF-8',
+            otf: 1,
+            ssel: 0,
+            tsel: 0,
+            kc: 7,
+            q: query,
+            tk: (this.TKK = await getToken(this.TKK))
+          }),
+        res => {
+          let body = ''
+          res.on('data', chunk => (body += chunk))
+          res.on('error', reject)
+          res.on('end', () => {
+            let parsed
+            try {
+              parsed = JSON.parse(body)
+            } catch (error) {
+              return reject(
+                new LinguistError(
+                  'Failed to connect to google API',
+                  'BAD_NETWORK'
+                )
+              )
+            }
+            resolve({
+              text: parsed[0].reduce(
+                (str, arr) => (arr[0] ? str + arr[0] : str),
+                ''
+              ),
+              from: {
+                language: {
+                  didYouMean: parsed[2] !== parsed[8][0][0],
+                  iso: parsed[8][0][0]
+                },
+                text: {
+                  autoCorrected: parsed[7] ? parsed[7][5] : false,
+                  value: parsed[7]
+                    ? parsed[7][0]
+                        .replace(/<b><i>/g, '[')
+                        .replace(/<\/i><\/b>/g, ']')
+                    : '',
+                  didYouMean: parsed[7] ? !parsed[7][5] : false
+                }
+              },
+              raw: parsed
+            })
+          })
+        }
       )
     })
   }

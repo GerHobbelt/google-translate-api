@@ -7,7 +7,13 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Launch JS",
+      "program": "${file}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch TS",
       "runtimeArgs": [
         "-r",
         "ts-node/register"
