@@ -1,15 +1,15 @@
 import test from 'ava'
 import { LangFrom } from '..'
 test('test a supported language – by code', t => {
-  t.true(Boolean(LangFrom('en')))
+  t.truthy(LangFrom('en'))
 })
 
 test('test an unsupported language – by code', t => {
-  t.false(Boolean(LangFrom('js')))
+  t.false(LangFrom('js'))
 })
 
 test('test a supported language – by name', t => {
-  t.true(Boolean(LangFrom('english')))
+  t.truthy(LangFrom('english'))
 })
 
 test('get a language code by its name', t => {
@@ -17,7 +17,7 @@ test('get a language code by its name', t => {
 })
 
 test('get an unsupported language code by its name', t => {
-  t.false(Boolean(LangFrom('javascript')))
+  t.false(LangFrom('javascript'))
 })
 
 test('get a supported language code by code', t => {
@@ -25,5 +25,5 @@ test('get a supported language code by code', t => {
 })
 
 test('call getCode with an empty string', t => {
-  t.is(Boolean(LangFrom('')), false)
+  t.is(LangFrom(''), false)
 })
