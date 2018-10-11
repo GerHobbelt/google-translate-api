@@ -1,15 +1,23 @@
 {
-  "name": "google-translate-api",
-  "version": "2.3.0",
-  "description": "A free and unlimited API for Google Translate",
-  "main": "index.js",
+  "name": "linguister",
+  "description": "Translate any text using the google translate api",
+  "version": "0.1.0",
+  "main": "lib/index.js",
   "scripts": {
     "test": "xo && nyc ava",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "eslint ./src/**",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm test && npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags",
     "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/matheuss/google-translate-api.git"
+    "url": "https://github.com/TomSputz/linguister.git"
   },
   "keywords": [
     "translate",
@@ -18,32 +26,50 @@
     "translate",
     "api",
     "free",
-    "language"
+    "language",
+    "typescript",
+    "ts"
   ],
   "author": {
-    "name": "Matheus Fernandes",
-    "email": "npm@matheus.top",
-    "url": "http://matheus.top"
+    "name": "Tom Sputz",
+    "email": "tomsputz@outlook.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/matheuss/google-translate-api/issues"
-  },
-  "homepage": "https://github.com/matheuss/google-translate-api#readme",
-  "dependencies": {
-    "configstore": "^2.0.0",
-    "google-translate-token": "latest",
-    "got": "^6.3.0",
-    "safe-eval": "^0.3.0"
+    "url": "https://github.com/TomSputz/linguister/issues"
   },
   "devDependencies": {
-    "ava": "^0.15.2",
-    "codecov": "^1.0.1",
-    "coveralls": "^2.11.11",
-    "nyc": "^7.0.0",
-    "xo": "^0.16.0"
+    "@types/node": "^10.11.7",
+    "ava": "1.0.0-beta.8",
+    "codecov": "^3.1.0",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.6.1",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-config-typescript": "^1.1.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-typescript": "^0.12.0",
+    "nyc": "^13.0.1",
+    "prettier": "^1.14.3",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.2",
+    "typescript-eslint-parser": "^20.0.0",
+    "xo": "^0.23.0"
+  },
+  "homepage": "https://github.com/TomSputz/linguister#readme",
+  "dependencies": {
+    "google-translate-token": "^1.0.0",
+    "got": "^9.2.2"
   },
   "xo": {
-    "space": 4
-  }
+    "space": 2
+  },
+  "ava": {
+		"compileEnhancements": true,
+		"extensions": [
+			"ts"
+		],
+		"require": [
+			"ts-node/register"
+		]
+	}
 }

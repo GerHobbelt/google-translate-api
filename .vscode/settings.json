@@ -1,0 +1,12 @@
+{
+  "eslint.validate": [
+    "javascript",
+    {
+      "language": "typescript",
+      "autoFix": true
+    }
+  ],
+  "eslint.autoFixOnSave": true,
+  "eslint.packageManager": "yarn",
+  "editor.tabSize": 2,
+}

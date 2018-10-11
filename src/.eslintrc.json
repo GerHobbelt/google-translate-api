@@ -1,0 +1,22 @@
+{
+  "parser": "typescript-eslint-parser",
+  "extends": ["eslint:recommended", "prettier", "typescript"],
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "plugins": ["typescript", "prettier"],
+  "rules": {
+    "prettier/prettier": ["error", {
+      "singleQuote": true,
+      "trailingComma": "none",
+      "semi": false
+    }],
+    "semi": "off",
+    "typescript/type-annotation-spacing": "off",
+    "typescript/no-namespace": "off",
+    "typescript/member-delimiter-style": "off",
+    "valid-jsdoc": ["error",{
+      "requireReturn": false
+    }]
+  }
+}
