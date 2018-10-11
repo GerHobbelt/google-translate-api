@@ -9,7 +9,7 @@
     "format": "eslint ./src/**/* --fix",
     "lint": "eslint ./src/**/*",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
+    "prepublishOnly": "npm run build && npm test && npm run lint",
     "preversion": "npm test && npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
@@ -20,6 +20,7 @@
     "url": "https://github.com/TomSputz/linguister.git"
   },
   "keywords": [
+    "linguist",
     "translate",
     "translator",
     "google",
@@ -49,6 +50,7 @@
     "eslint-config-xo-typescript": "^0.2.0",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-typescript": "^0.12.0",
+    "mitm": "^1.4.0",
     "nyc": "^13.0.1",
     "prettier": "^1.14.3",
     "ts-node": "^7.0.1",
@@ -56,10 +58,6 @@
     "typescript-eslint-parser": "^20.0.0"
   },
   "homepage": "https://github.com/TomSputz/linguister#readme",
-  "dependencies": {
-    "google-translate-token": "^1.0.0",
-    "got": "^6.3.2"
-  },
   "ava": {
     "compileEnhancements": false,
     "extensions": [
