@@ -4,3 +4,5 @@ tsconfig.json
 .travis.yml
 .vscode
 examples
+.nyc_output
+coverage.lcov
