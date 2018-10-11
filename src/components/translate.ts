@@ -118,11 +118,11 @@ const languages = {
 }
 type langISO = keyof typeof languages
 
-type Translation = {
+class Translation {
   /** The translated text */
-  text: string
+  public text: string
   /** The original text */
-  from: {
+  public from: {
     language: {
       /** True if the API suggested a correction in the source language */
       didYouMean: boolean
@@ -139,7 +139,32 @@ type Translation = {
     }
   }
   /** The raw response from th egoogle translate server */
-  raw: Array<any>
+  public raw: Array<any>
+  public constructor(gAPIResponse) {
+    this.text = gAPIResponse[0].reduce(
+      (str, arr) => (arr[0] ? str + arr[0] : str),
+      ''
+    )
+    this.from = {
+      language: {
+        didYouMean: gAPIResponse[2] !== gAPIResponse[8][0][0],
+        iso: gAPIResponse[8][0][0]
+      },
+      text: {
+        autoCorrected: gAPIResponse[7] ? gAPIResponse[7][5] : false,
+        value: gAPIResponse[7]
+          ? gAPIResponse[7][0]
+              .replace(/<b><i>/g, '[')
+              .replace(/<\/i><\/b>/g, ']')
+          : '',
+        didYouMean: gAPIResponse[7] ? !gAPIResponse[7][5] : false
+      }
+    }
+    this.raw = gAPIResponse
+  }
+  public toString() {
+    return this.text
+  }
 }
 /**
  * Practically never does anything. Gonna have to look into how the api actually works
@@ -220,18 +245,20 @@ export class TranslateAPI {
       to?: string
     } = {}
   ): Promise<Translation> {
-    const options = {
-      from: LangFrom(opts.from || 'auto') || 'auto',
-      to: LangFrom(opts.to || 'en') || 'en'
-    }
-    const startat = (this.lastreq =
-      Date.now() > this.lastreq + this.ratelimit
-        ? Date.now()
-        : this.lastreq + this.ratelimit)
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       setTimeout(
-        () => resolve(this._translate(text, options.from, options.to)),
-        startat - Date.now()
+        () =>
+          resolve(
+            this._translate(
+              text,
+              LangFrom(opts.from || 'auto') || 'auto',
+              LangFrom(opts.to || 'en') || 'en'
+            )
+          ),
+        (this.lastreq =
+          Date.now() > this.lastreq + this.ratelimit
+            ? Date.now()
+            : this.lastreq + this.ratelimit) - Date.now()
       )
     })
   }
@@ -259,9 +286,8 @@ export class TranslateAPI {
           res.on('data', chunk => (body += chunk))
           res.on('error', reject)
           res.on('end', () => {
-            let parsed
             try {
-              parsed = JSON.parse(body)
+              resolve(new Translation(JSON.parse(body)))
             } catch (error) {
               return reject(
                 new LinguistError(
@@ -270,28 +296,6 @@ export class TranslateAPI {
                 )
               )
             }
-            resolve({
-              text: parsed[0].reduce(
-                (str, arr) => (arr[0] ? str + arr[0] : str),
-                ''
-              ),
-              from: {
-                language: {
-                  didYouMean: parsed[2] !== parsed[8][0][0],
-                  iso: parsed[8][0][0]
-                },
-                text: {
-                  autoCorrected: parsed[7] ? parsed[7][5] : false,
-                  value: parsed[7]
-                    ? parsed[7][0]
-                        .replace(/<b><i>/g, '[')
-                        .replace(/<\/i><\/b>/g, ']')
-                    : '',
-                  didYouMean: parsed[7] ? !parsed[7][5] : false
-                }
-              },
-              raw: parsed
-            })
           })
         }
       )
