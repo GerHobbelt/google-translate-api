@@ -273,8 +273,8 @@ export class TranslateAPI {
    */
   private _translate(
     query: string,
-    from: keyof typeof languages = 'auto',
-    to: keyof typeof languages = 'en'
+    from: keyof typeof languages,
+    to: keyof typeof languages
   ): Promise<Translation> {
     return new Promise(async (resolve, reject) => {
       get(
