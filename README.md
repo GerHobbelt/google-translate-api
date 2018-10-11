@@ -76,12 +76,25 @@ translate('I spea Dutch!', {from: 'en', to: 'nl'}).then(res => {
 
 #### Table of Contents
 
+-   [Translation](#translation)
 -   [LangFrom](#langfrom)
-    -   [Parameters](#parameters)
 -   [TranslateAPI](#translateapi)
-    -   [Parameters](#parameters-1)
     -   [translate](#translate)
-        -   [Parameters](#parameters-2)
+
+### Translation
+
+The class the API responds with
+
+#### Properties
+
+-   `text` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** –  The translated text
+-   `from` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Details about the original text
+    -   `from.language.didYouMean` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** True if the API suggested a correction in the source language
+    -   `from.language.didYouMean` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The ISO 639-I language code of the language that the API has recognized in the text
+    -   `from.text.value` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The untranslated auto corrected text or suggested text
+    -   `from.text.autoCorrected` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** True if the API has auto corrected the text
+    -   `from.text.didYouMean` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** True if the API has suggested corrections to the text
+-   `raw` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** The raw response from th egoogle translate server
 
 ### LangFrom
 
