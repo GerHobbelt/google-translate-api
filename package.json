@@ -4,10 +4,10 @@
   "version": "0.1.0",
   "main": "lib/index.js",
   "scripts": {
-    "test": "xo && nyc ava",
+    "test": "npm run lint && nyc ava",
     "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "eslint ./src/**",
+    "format": "eslint ./src/**/* --fix",
+    "lint": "eslint ./src/**/*",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm test && npm run lint",
@@ -46,30 +46,27 @@
     "eslint": "^5.6.1",
     "eslint-config-prettier": "^3.1.0",
     "eslint-config-typescript": "^1.1.0",
+    "eslint-config-xo-typescript": "^0.2.0",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-typescript": "^0.12.0",
     "nyc": "^13.0.1",
     "prettier": "^1.14.3",
     "ts-node": "^7.0.1",
     "typescript": "^3.1.2",
-    "typescript-eslint-parser": "^20.0.0",
-    "xo": "^0.23.0"
+    "typescript-eslint-parser": "^20.0.0"
   },
   "homepage": "https://github.com/TomSputz/linguister#readme",
   "dependencies": {
     "google-translate-token": "^1.0.0",
-    "got": "^9.2.2"
-  },
-  "xo": {
-    "space": 2
+    "got": "^6.3.2"
   },
   "ava": {
-		"compileEnhancements": true,
-		"extensions": [
-			"ts"
-		],
-		"require": [
-			"ts-node/register"
-		]
-	}
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  }
 }

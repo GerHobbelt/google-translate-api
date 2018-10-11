@@ -1,4 +1,4 @@
-# linguister [![Build Status](https://travis-ci.org/TomSputz/linguister.svg?branch=master)](https://travis-ci.org/TomSputz/linguister) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo) [![Coverage Status](https://coveralls.io/repos/github/TomSputz/linguister/badge.svg?branch=master)](https://coveralls.io/github/TomSputz/linguister?branch=master) [![Known Vulnerabilities](https://snyk.io/test/npm/linguister/badge.svg)](https://snyk.io/test/npm/google-translate-api)
+# linguister [![Build Status](https://travis-ci.org/TomSputz/linguister.svg?branch=master)](https://travis-ci.org/TomSputz/linguister) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo) [![Coverage Status](https://coveralls.io/repos/github/TomSputz/linguister/badge.svg?branch=master)](https://coveralls.io/github/TomSputz/linguister?branch=master) [![Known Vulnerabilities](https://snyk.io/test/github/TomSputz/linguister/badge.svg)](https://snyk.io/test/npm/google-translate-api)
 
 A **free** and **unlimited** API for Google Translate built in typescript :dollar::no_entry_sign:
 
@@ -126,6 +126,10 @@ translate('I spea Dutch').then(res => {
 ```
 
 Otherwise, it will be an empty `string` (`''`).
+
+## Coverage
+
+To run the coverage task, the coveralls token must be set in the COVERALLS_REPO_TOKEN enviroment variable
 
 ## License
 

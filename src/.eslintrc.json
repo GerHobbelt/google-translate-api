@@ -12,6 +12,7 @@
       "semi": false
     }],
     "semi": "off",
+    "no-extra-semi": "off",
     "typescript/type-annotation-spacing": "off",
     "typescript/no-namespace": "off",
     "typescript/member-delimiter-style": "off",
