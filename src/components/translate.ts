@@ -211,11 +211,13 @@ function getToken(TKK: string): any {
  * @param {string} query – the name or the code of the desired language
  * @returns {string} The ISO 639-1 code of the language
  */
-export function LangFrom(query: string): string | undefined {
+export function LangFrom(query: string): langISO | false {
   return (
-    Object.keys(languages).find(
+    (Object.keys(languages).find(
       key => languages[key].toLowerCase() === query.toLowerCase()
-    ) || (languages[query] ? query : undefined)
+    ) as langISO) ||
+    (languages[query] ? query : false) ||
+    false
   )
 }
 /**
@@ -262,7 +264,18 @@ export class TranslateAPI {
       )
     })
   }
-  private _translate(query, from, to): Promise<Translation> {
+  /**
+   * Translate any string with googles translate
+   * @param {String} query String to translate
+   * @param {String} [from='auto'] ISO 639-1 Language code to translate from
+   * @param {String} [to='en'] ISO 639-1 Language code to translate to
+   * @return {Promise<Translation>} The translation response
+   */
+  private _translate(
+    query: string,
+    from: keyof typeof languages = 'auto',
+    to: keyof typeof languages = 'en'
+  ): Promise<Translation> {
     return new Promise(async (resolve, reject) => {
       get(
         'https://translate.google.com/translate_a/single?' +
