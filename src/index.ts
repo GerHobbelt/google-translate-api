@@ -1,11 +1,15 @@
 import { TranslateAPI, LangFrom } from './components/translate'
-const Default = new TranslateAPI()
-const translate = Default.translate.bind(Default)
-const Linguister: typeof Default.translate & {
+const DefaultAPI = new TranslateAPI()
+const translate = DefaultAPI.translate.bind(DefaultAPI)
+export { TranslateAPI, translate, LangFrom }
+const Linguister: typeof DefaultAPI.translate & {
   LangFrom: typeof LangFrom
   TranslateAPI: typeof TranslateAPI
+  translate: typeof translate
 } = translate
 Linguister.LangFrom = LangFrom
 Linguister.TranslateAPI = TranslateAPI
-export { translate, TranslateAPI, LangFrom }
+Linguister.translate = translate
 export default Linguister
+Linguister['default'] = Linguister
+module.exports = Linguister
